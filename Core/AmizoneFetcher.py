@@ -21,7 +21,7 @@ class AmizoneFetcher:
     __dict_of_colors = {"255, 0, " : "red", "79, 204, 7": "green", "58, 135, 17": "gray"}
 
     def __init__(self):
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Firefox()
         self.wait = WebDriverWait(self.driver, 30) 
 
     def setCredentials(self, login, password):
