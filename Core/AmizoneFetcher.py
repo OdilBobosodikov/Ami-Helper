@@ -5,7 +5,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from  datetime import date
-import time 
 
 class AmizoneFetcher:
     __amizone_url='https://s.amizone.net/'
@@ -21,7 +20,7 @@ class AmizoneFetcher:
     __dict_of_colors = {"255, 0, " : "red", "79, 204, 7": "green", "58, 135, 17": "gray"}
 
     def __init__(self):
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.Chrome()
         self.wait = WebDriverWait(self.driver, 30) 
 
     def setCredentials(self, login, password):
@@ -52,7 +51,9 @@ class AmizoneFetcher:
         self.driver.find_element(By.XPATH, "(//button[contains(@class, 'btn btn-default')])[2]").click()
 
         # For testing purposes
-        #self.driver.find_element(By.XPATH, "//button[contains(@class, 'fc-prev-button fc-button fc-state-default fc-corner-left')]").click()
+        self.driver.find_element(By.XPATH, "//button[contains(@class, 'fc-prev-button fc-button fc-state-default fc-corner-left')]").click()
+        self.driver.find_element(By.XPATH, "//button[contains(@class, 'fc-prev-button fc-button fc-state-default fc-corner-left')]").click()
+
         return True
     
     def fetch_time_table(self):
@@ -60,8 +61,8 @@ class AmizoneFetcher:
 
         if self.__wrong_credentials:
             return self.__wrong_credentials_message
-        
         try:
+            self.wait.until(EC.presence_of_element_located((By.XPATH, "//tr[contains(@class, 'fc-list-item class-schedule-color')]")))
             schedule_items = self.driver.find_elements(By.XPATH, "//tr[contains(@class, 'fc-list-item class-schedule-color')]")
             attendance_dots = self.driver.find_elements(By.CLASS_NAME, "fc-event-dot")
             
@@ -84,6 +85,7 @@ class AmizoneFetcher:
         if self.__wrong_credentials:
             return self.__wrong_credentials_message
         
+        self.__attendence = []
         try:
             lst_of_subjects = self.driver.find_element(By.ID, "tasks")
         except NoSuchElementException: 
@@ -95,14 +97,11 @@ class AmizoneFetcher:
             self.__attendence.append(i.get_attribute("innerText").replace("\n"," ").strip())
         
         self.__attendence_updated_time = date.today()
-        return self.__attendence
 
     def compute_overall_statistics(self):
         
         """ Returns a dictionary of information about student's attendence in the format {subject: [attended_lessons, all_lessons]}"""
-
-        if len(self.__attendence) == 0 or self.__attendence_updated_time < date.today():
-            self.__fetch_attendance()
+        self.__fetch_attendance()
 
         for i in self.__attendence:
             words = i.split(" ")
@@ -114,7 +113,7 @@ class AmizoneFetcher:
         return self.__statistics
     
     def dispose(self):
-        self.driver.close()
+        self.driver.quit()
 
 
 

@@ -2,6 +2,7 @@ import telebot
 from Core.User import User
 from telebot import types
 from Core.AmizoneFetcher import AmizoneFetcher
+from  datetime import date
 
 TOKEN = '6507971785:AAFuZRJjwkDlmQLaynPJLY3kJkCR6QGKvhI'
 user = User()
@@ -50,15 +51,19 @@ def time(message):
     user_state = user_states.get(message.chat.id, {})
     if user_state.get('logged_in', False):
 
+        #if date.today().weekday() == 5 or date.today().weekday() == 6:
+         #   bot.send_message(message.chat.id, "No time table on weekend")
+          #  return
+        
         user_login, password = user.get_credentials()
         ami_fetcher = AmizoneFetcher()
         ami_fetcher.setCredentials(user_login, password)
 
         msg = ""
         time_table = ami_fetcher.fetch_time_table()
+        
         for i in time_table:
             subject, color = i
-
             if(color == "red"):
                 color = "🔴"
             elif(color == "green"):
@@ -66,15 +71,14 @@ def time(message):
             else:
                 color = "🔵"
             msg += subject + "  " + color + "\n"
-        
-        ami_fetcher.dispose()
         bot.send_message(message.chat.id, msg)
+        ami_fetcher.dispose()
     else:
         bot.send_message(message.chat.id, "First you need to /login")
 
 
 @bot.message_handler(commands=['attendance'])
-def statiattendance(message):
+def attendance(message):
     user_state = user_states.get(message.chat.id, {})
     
     if user_state.get('logged_in', False):
@@ -83,8 +87,9 @@ def statiattendance(message):
         ami_fetcher = AmizoneFetcher()
         ami_fetcher.setCredentials(user_login, password)
 
-        #Don't now for shure color range of attendence, thats why I use my own: 0-74.9 -> red, 75-84.9 -> yellow, 85-100 -> green
+        #Don't now for sure color range of attendence, thats why I use my own: 0-74.9 -> red, 75-84.9 -> yellow, 85-100 -> green
         statistics = ami_fetcher.compute_overall_statistics()
+
         for subject in statistics:
             attended_lessons, all_lessons = statistics[subject]
             percentage = round(attended_lessons/ all_lessons,2) * 100
@@ -96,8 +101,9 @@ def statiattendance(message):
                 emoji = "🟩"
             msg += subject + " : " + str(attended_lessons) + "/" + str(all_lessons) + " -> " + str(percentage) + "%  " + emoji + "\n"
         
-        ami_fetcher.dispose()
+
         bot.send_message(message.chat.id, msg)
+        ami_fetcher.dispose()
     else:
         bot.send_message(message.chat.id, "First you need to /login")
 
