@@ -4,7 +4,7 @@ from telebot import types
 from Core.AmizoneFetcher import AmizoneFetcher
 from  datetime import date
 
-TOKEN = '6507971785:AAFuZRJjwkDlmQLaynPJLY3kJkCR6QGKvhI'
+TOKEN = 'TOKEN'
 user = User()
 bot = telebot.TeleBot(TOKEN)
 
