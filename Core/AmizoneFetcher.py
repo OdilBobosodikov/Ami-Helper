@@ -51,8 +51,8 @@ class AmizoneFetcher:
         self.driver.find_element(By.XPATH, "(//button[contains(@class, 'btn btn-default')])[2]").click()
 
         # For testing purposes
-        self.driver.find_element(By.XPATH, "//button[contains(@class, 'fc-prev-button fc-button fc-state-default fc-corner-left')]").click()
-        self.driver.find_element(By.XPATH, "//button[contains(@class, 'fc-prev-button fc-button fc-state-default fc-corner-left')]").click()
+        #self.driver.find_element(By.XPATH, "//button[contains(@class, 'fc-prev-button fc-button fc-state-default fc-corner-left')]").click()
+        #self.driver.find_element(By.XPATH, "//button[contains(@class, 'fc-prev-button fc-button fc-state-default fc-corner-left')]").click()
 
         return True
     
